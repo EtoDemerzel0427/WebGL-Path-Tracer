@@ -5,7 +5,7 @@ import {
   tracerVertexSource,
   makeTracerFragmentSource
 } from "./shader.js";
-import { getEyeRay } from "./util.js";
+import { getEyeRay} from "./util.js";
 
 export class PathTracer {
   constructor(gl) {
@@ -64,10 +64,10 @@ export class PathTracer {
     }
     this.uniforms.eye = eye;
     this.uniforms.glossiness = glossiness;
-    this.uniforms.ray00 = getEyeRay(matrix, -1, -1, eye);
-    this.uniforms.ray01 = getEyeRay(matrix, -1, +1, eye);
-    this.uniforms.ray10 = getEyeRay(matrix, +1, -1, eye);
-    this.uniforms.ray11 = getEyeRay(matrix, +1, +1, eye);
+    this.uniforms.ray00 = getEyeRay(-1, -1, matrix, eye);
+    this.uniforms.ray01 = getEyeRay(-1, +1, matrix, eye);
+    this.uniforms.ray10 = getEyeRay(+1, -1, matrix, eye);
+    this.uniforms.ray11 = getEyeRay(+1, +1, matrix, eye);
     this.uniforms.timeSinceStart = timeSinceStart;
     this.uniforms.textureWeight = this.sampleCount / (this.sampleCount + 1);
 

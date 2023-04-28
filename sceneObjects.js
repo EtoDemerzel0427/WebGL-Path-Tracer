@@ -1,4 +1,3 @@
-import {Vector} from "./sylvester.src.js";
 import { Vec3 } from "./dist/TSM.js";
 
 class SceneObject {

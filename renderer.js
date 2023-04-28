@@ -1,7 +1,7 @@
 import {compileShader, setUniforms} from './util.js';
 import {lineVertexSource, lineFragmentSource} from './shader.js';
 import {PathTracer} from "./tracer.js";
-import {Matrix, Vector} from "./sylvester.src.js";
+import {Vec3, Mat4} from "./dist/TSM.js";
 
 export class Renderer {
   constructor(gl) {
@@ -49,8 +49,10 @@ export class Renderer {
   }
 
   update(modelviewProjection, timeSinceStart, eye, glossiness) {
-    const jitter = Matrix.Translation(Vector.create([Math.random() * 2 - 1, Math.random() * 2 - 1, 0]).multiply(1 / 512));
-    const inverse = jitter.multiply(modelviewProjection).inverse();
+    const random_vec3 = new Vec3([Math.random() * 2 - 1, Math.random() * 2 - 1, 0]).scale(1 / 512);
+    const jitter_ = Mat4.identity.copy().translate(random_vec3);
+
+    const inverse = jitter_.multiply(modelviewProjection).inverse();
     this.modelviewProjection = modelviewProjection;
     this.pathTracer.update(inverse, timeSinceStart, eye, glossiness);
   }

@@ -4,8 +4,6 @@ const epsilon = '0.0001';
 const infinity = '10000.0';
 const lightSize = 0.1;
 const lightVal = 0.5;
-const gamma = 1.0;
-const invGamma = 1.0 / gamma;
 
 export const renderVertexSource = `
   attribute vec3 vertex;

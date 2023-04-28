@@ -1,8 +1,6 @@
-import { Vector } from './sylvester.src.js';
 import { UI } from './gui.js';
-import { Cube, Sphere, Light} from "./sceneObjects.js";
+import { Cube, Sphere } from "./sceneObjects.js";
 import { Vec3 } from "./dist/TSM.js";
-import { Camera } from "./dist/webglutils/Camera.js";
 
 var gl = null;
 var ui;
@@ -13,9 +11,7 @@ var inputFocusCount = 0;
 var angleX = 0;
 var angleY = 0;
 var zoomZ = 2.5;
-// var eye = Vector.create([0, 0, 0]);
 let eye = new Vec3([0, 0, 2.5]);
-var light = Vector.create([0.5, 0.5, -0.5]);
 
 var MATERIAL_DIFFUSE = 0;
 var MATERIAL_MIRROR = 1;
@@ -140,31 +136,9 @@ function makeLivingRoom() {
 
 
 function makeEmpty() {
-  var objects = [];
-  return objects;
+  return [];
 }
 
-var XNEG = 0, XPOS = 1, YNEG = 2, YPOS = 3, ZNEG = 4, ZPOS = 5;
-
-function addRecursiveSpheresBranch(objects, center, radius, depth, dir) {
-  objects.push(new Sphere(center, radius ));
-  if(depth--) {
-    if(dir != XNEG) addRecursiveSpheresBranch(objects, center.subtract(Vector.create([radius * 1.5, 0, 0])), radius / 2, depth, XPOS);
-    if(dir != XPOS) addRecursiveSpheresBranch(objects, center.add(Vector.create([radius * 1.5, 0, 0])),      radius / 2, depth, XNEG);
-
-    if(dir != YNEG) addRecursiveSpheresBranch(objects, center.subtract(Vector.create([0, radius * 1.5, 0])), radius / 2, depth, YPOS);
-    if(dir != YPOS) addRecursiveSpheresBranch(objects, center.add(Vector.create([0, radius * 1.5, 0])),      radius / 2, depth, YNEG);
-
-    if(dir != ZNEG) addRecursiveSpheresBranch(objects, center.subtract(Vector.create([0, 0, radius * 1.5])), radius / 2, depth, ZPOS);
-    if(dir != ZPOS) addRecursiveSpheresBranch(objects, center.add(Vector.create([0, 0, radius * 1.5])),      radius / 2, depth, ZNEG);
-  }
-}
-
-function makeRecursiveSpheres() {
-  var objects = [];
-  addRecursiveSpheresBranch(objects, Vector.create([0, 0, 0]), 0.3, 2, -1);
-  return objects;
-}
 
 window.onload = function() {
   gl = null;

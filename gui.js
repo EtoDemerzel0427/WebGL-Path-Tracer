@@ -1,13 +1,8 @@
 import { Renderer } from './renderer.js';
 import { Light } from './sceneObjects.js';
-import { makeLookAt } from './glUtils.js';
-import { makePerspective } from './glUtils.js';
-import { getEyeRay} from "./util.js";
 import { Cube, Sphere } from "./sceneObjects.js";
-import { Vector} from "./sylvester.src.js";
 import { Vec3, Mat4 } from "./dist/TSM.js";
-import { Camera } from "./dist/webglutils/Camera.js";
-import {getEyeRay_v2} from "./utils.js";
+import {getEyeRay} from "./util.js";
 
 const MATERIAL_GLOSSY = 2;
 export class UI {
@@ -18,15 +13,7 @@ export class UI {
     this.material = material;
     this.environment = environment;
     this.glossiness = glossiness;
-    this.camera =  new Camera(
-        new Vec3([0, 0, 2.5]),          // eye position
-        new Vec3([0, 0, 0]),          // target position
-        new Vec3([0, 1, 0]),          // up direction
-        55,                         // field of view
-        1,// aspect ratio
-        0.1,                          // near plane
-        100                            // far plane
-    );
+
     this.initEventListeners();
   }
 
@@ -38,22 +25,18 @@ export class UI {
 
   update(eye, timeSinceStart) {
     this.eye = eye
-    // this.camera.setPos(new Vec3([eye.elements[0], eye.elements[1], eye.elements[2]]));
 
-    this.modelview = makeLookAt(eye.x, eye.y, eye.z, 0, 0, 0, 0, 1, 0);
-    this.projection = makePerspective(55, 1, 0.1, 100);
     this.modelview_ = Mat4.lookAt(eye, new Vec3([0, 0, 0]), new Vec3([0, 1, 0]));
     this.projection_ = Mat4.perspective(55, 1, 0.1, 100);
-    this.modelviewProjection = this.projection.multiply(this.modelview);
     this.modelviewProjection_ = this.projection_.multiply(this.modelview_);
 
-    this.renderer.update(this.modelviewProjection, timeSinceStart, Vector.create([eye.x, eye.y, eye.z]) , this.glossiness);
+    this.renderer.update(this.modelviewProjection_, timeSinceStart, eye, this.glossiness);
   }
 
   mouseDown(x, y) {
     let t;
     const origin = this.eye.copy();
-    const ray = getEyeRay_v2((x / 512) * 2 - 1, 1 - (y / 512) * 2, this.modelviewProjection_.copy().inverse(), this.eye);
+    const ray = getEyeRay((x / 512) * 2 - 1, 1 - (y / 512) * 2, this.modelviewProjection_.copy().inverse(), this.eye);
 
     // test the selection box first
     if (this.renderer.selectedObject != null) {
@@ -97,7 +80,7 @@ export class UI {
   mouseMove(x, y) {
     if (this.moving) {
       const origin = this.eye.copy();
-      const ray = getEyeRay_v2((x / 512) * 2 - 1, 1 - (y / 512) * 2, this.modelviewProjection_.copy().inverse(), this.eye.copy());
+      const ray = getEyeRay((x / 512) * 2 - 1, 1 - (y / 512) * 2, this.modelviewProjection_.copy().inverse(), this.eye.copy());
 
 
       const t = (this.movementDistance - Vec3.dot(this.movementNormal, origin)) / Vec3.dot(this.movementNormal, ray);
@@ -115,7 +98,7 @@ export class UI {
   mouseUp(x, y) {
     if (this.moving) {
       const origin = this.eye.copy();
-      const ray = getEyeRay_v2((x / 512) * 2 - 1, 1 - (y / 512) * 2, this.modelviewProjection_.copy().inverse(), this.eye);
+      const ray = getEyeRay((x / 512) * 2 - 1, 1 - (y / 512) * 2, this.modelviewProjection_.copy().inverse(), this.eye);
 
       // const t = (this.movementDistance - this.movementNormal.dot(origin1)) / this.movementNormal.dot(ray);
       const t = (this.movementDistance - Vec3.dot(this.movementNormal, origin)) / Vec3.dot(this.movementNormal, ray);

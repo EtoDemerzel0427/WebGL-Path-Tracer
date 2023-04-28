@@ -1,7 +1,15 @@
-import { Vector, Matrix } from './sylvester.src.js';
-import { Vec3, Mat4 } from './dist/TSM.js';
-function getEyeRay(matrix, x, y, eye) {
-  return matrix.multiply(Vector.create([x, y, 0, 1])).divideByW().ensure3().subtract(eye);
+import {Vec3, Mat4, Vec4} from './dist/TSM.js';
+
+function getEyeRay(x, y, customMatrix, eye) {
+  // this is the translated implementation
+  //   const inv_model_view = customMatrix.inverse();
+  let ndc = new Vec4([x, y, 0, 1]);
+
+  let p = customMatrix.multiplyVec4(ndc);
+  p = p.scale(1/p.w);
+
+  let p_vec3 = new Vec3([p.x, p.y, p.z]);
+  return p_vec3.subtract(eye);//.normalize();
 }
 
 function setUniforms(gl, program, uniforms) {
@@ -9,11 +17,7 @@ function setUniforms(gl, program, uniforms) {
     const value = uniforms[name];
     const location = gl.getUniformLocation(program, name);
     if (location == null) continue;
-    if(value instanceof Vector) {
-      gl.uniform3fv(location, new Float32Array([value.elements[0], value.elements[1], value.elements[2]]));
-    } else if(value instanceof Matrix) {
-      gl.uniformMatrix4fv(location, false, new Float32Array(value.flatten()));
-    } else if (value instanceof Vec3) {
+    if (value instanceof Vec3) {
         gl.uniform3fv(location, new Float32Array([value.x, value.y, value.z]));
     } else if (value instanceof Mat4) {
         gl.uniformMatrix4fv(location, false, new Float32Array(value.all()));
