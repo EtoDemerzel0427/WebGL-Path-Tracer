@@ -193,8 +193,6 @@ export class PathTracerAnimation extends CanvasAnimation {
             if (event.key === 'Backspace' || event.key === 'Delete') {
                 this.ui.deleteSelection();
 
-                // don't let the backspace key go back a page
-                event.preventDefault();
             }
         }
     }
