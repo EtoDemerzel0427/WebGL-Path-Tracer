@@ -14,14 +14,14 @@ const zoomZ = 2.5;
 let eye = new Vec3([0, 0, 2.5]);
 
 const MATERIAL_DIFFUSE = 0;
-var MATERIAL_MIRROR = 1;
-var MATERIAL_GLOSSY = 2;
-var material = MATERIAL_DIFFUSE;
-var glossiness = 0.6;
+// const MATERIAL_MIRROR = 1;
+const MATERIAL_GLOSSY = 2;
+let material = MATERIAL_DIFFUSE;
+let glossiness = 0.6;
 
-var YELLOW_BLUE_CORNELL_BOX = 0;
-var RED_GREEN_CORNELL_BOX = 1;
-var environment = YELLOW_BLUE_CORNELL_BOX;
+const YELLOW_BLUE_CORNELL_BOX = 0;
+// const RED_GREEN_CORNELL_BOX = 1;
+let environment = YELLOW_BLUE_CORNELL_BOX;
 
 function tick(timeSinceStart) {
   eye.x = zoomZ * Math.sin(angleY) * Math.cos(angleX);
@@ -41,7 +41,7 @@ function tick(timeSinceStart) {
 function makeStudy() {
   const objects = [];
 
-  // table top
+  // table-top
   objects.push(new Cube(new Vec3([-0.5, -0.3, -0.8]), new Vec3([0.3, -0.35, 0.8])));
 
   // table legs
@@ -95,10 +95,10 @@ function makeStudy() {
 
 
 function makeLivingRoom() {
-  var objects = [];
+  const objects = [];
 
   // lower level
-  // table top
+  // table-top
   objects.push(new Cube(new Vec3([-0.8, -0.65, 0]), new Vec3([-0.35, -0.6, 0.7])));
   objects.push(new Cube(new Vec3([-0.8, -0.8, 0]), new Vec3([-0.35, -0.75, 0.7])));
 
@@ -150,8 +150,8 @@ window.onload = function() {
     error.innerHTML = 'Loading...';
 
     // keep track of whether an <input> is focused or not (will be no only if inputFocusCount == 0)
-    var inputs = document.getElementsByTagName('input');
-    for(var i= 0; i < inputs.length; i++) {
+    const inputs = document.getElementsByTagName('input');
+    for(let i= 0; i < inputs.length; i++) {
       inputs[i].onfocus = function(){ inputFocusCount++; };
       inputs[i].onblur = function(){ inputFocusCount--; };
     }
@@ -161,10 +161,10 @@ window.onload = function() {
     ui = new UI(gl, eye, material, environment, glossiness);
     ui.setObjects(makeStudy());
     const start = new Date();
-    error.style.zIndex = -1;
+    error.style.zIndex = "-1";
     setInterval(function(){ tick((new Date() - start) * 0.001); }, 1000 / 60);
   } else {
-    error.innerHTML = 'Your browser does not support WebGL.<br>Please see <a href="http://www.khronos.org/webgl/wiki/Getting_a_WebGL_Implementation">Getting a WebGL Implementation</a>.';
+    error.innerHTML = 'Your browser does not support WebGL.';
   }
 };
 
@@ -194,7 +194,7 @@ function canvasMousePos(event) {
   };
 }
 
-var mouseDown = false, oldX, oldY;
+let mouseDown = false, oldX, oldY;
 
 document.addEventListener('mousedown', (event) => {
   const mouse = canvasMousePos(event);
@@ -228,7 +228,7 @@ document.addEventListener('mousemove', (event) => {
     oldX = mouse.x;
     oldY = mouse.y;
   } else {
-    const canvasPos = elementPos(canvas);
+    // const canvasPos = elementPos(canvas);
     ui.mouseMove(mouse.x, mouse.y);
   }
 });

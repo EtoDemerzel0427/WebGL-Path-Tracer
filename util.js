@@ -1,15 +1,13 @@
 import {Vec3, Mat4, Vec4} from './dist/TSM.js';
 
 function getEyeRay(x, y, customMatrix, eye) {
-  // this is the translated implementation
-  //   const inv_model_view = customMatrix.inverse();
   let ndc = new Vec4([x, y, 0, 1]);
 
   let p = customMatrix.multiplyVec4(ndc);
   p = p.scale(1/p.w);
 
   let p_vec3 = new Vec3([p.x, p.y, p.z]);
-  return p_vec3.subtract(eye);//.normalize();
+  return p_vec3.subtract(eye);
 }
 
 function setUniforms(gl, program, uniforms) {

@@ -40,8 +40,8 @@ export class UI {
 
     // test the selection box first
     if (this.renderer.selectedObject != null) {
-      var minBounds = this.renderer.selectedObject.getMinCorner();
-      var maxBounds = this.renderer.selectedObject.getMaxCorner();
+      const minBounds = this.renderer.selectedObject.getMinCorner();
+      const maxBounds = this.renderer.selectedObject.getMaxCorner();
       t = Cube.intersect(origin, ray, minBounds, maxBounds);
 
       if(t < Number.MAX_VALUE) {
@@ -84,8 +84,8 @@ export class UI {
 
 
       const t = (this.movementDistance - Vec3.dot(this.movementNormal, origin)) / Vec3.dot(this.movementNormal, ray);
-          //(this.movementDistance - this.movementNormal.dot(origin1)) / this.movementNormal.dot(ray);
-      // const hit = origin.add(ray.multiply(t));
+
+
       const hit = origin.add(ray.scale(t));
       const vec = hit.subtract(this.originalHit);
 
@@ -100,7 +100,6 @@ export class UI {
       const origin = this.eye.copy();
       const ray = getEyeRay((x / 512) * 2 - 1, 1 - (y / 512) * 2, this.modelviewProjection_.copy().inverse(), this.eye);
 
-      // const t = (this.movementDistance - this.movementNormal.dot(origin1)) / this.movementNormal.dot(ray);
       const t = (this.movementDistance - Vec3.dot(this.movementNormal, origin)) / Vec3.dot(this.movementNormal, ray);
       const hit = origin.add(ray.scale(t));
 
