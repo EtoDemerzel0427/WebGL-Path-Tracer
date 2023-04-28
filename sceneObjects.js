@@ -1,4 +1,5 @@
 import {Vector} from "./sylvester.src.js";
+import { Vec3 } from "./dist/TSM.js";
 
 class SceneObject {
     getMinCorner() { }
@@ -24,16 +25,18 @@ class Cube extends SceneObject {
         this.minStr = 'cubeMin' + Cube.numCubes;
         this.maxStr = 'cubeMax' + Cube.numCubes;
         this.intersectStr = 'tCube' + Cube.numCubes;
-        this.temporaryTranslation = Vector.create([0, 0, 0]);
+        this.temporaryTranslation = new Vec3([0, 0, 0]);
+        //Vector.create([0, 0, 0]);
     }
 
     static intersect(origin, ray, cubeMin, cubeMax) {
-        let tMin = cubeMin.subtract(origin).componentDivide(ray);
-        let tMax = cubeMax.subtract(origin).componentDivide(ray);
-        let t1 = Vector.min(tMin, tMax);
-        let t2 = Vector.max(tMin, tMax);
-        let tNear = t1.maxComponent();
-        let tFar = t2.minComponent();
+        const tMin = cubeMin.copy().subtract(origin).divide(ray);
+        const tMax = cubeMax.copy().subtract(origin).divide(ray);
+        const t1 = new Vec3([Math.min(tMin.x, tMax.x), Math.min(tMin.y, tMax.y), Math.min(tMin.z, tMax.z)]);
+        const t2 = new Vec3([Math.max(tMin.x, tMax.x), Math.max(tMin.y, tMax.y), Math.max(tMin.z, tMax.z)]);
+        const tNear = Math.max(t1.x, t1.y, t1.z);
+        const tFar = Math.min(t2.x, t2.y, t2.z);
+
         if (tNear > 0 && tNear < tFar) {
             return tNear;
         }
@@ -85,16 +88,17 @@ uniform vec3 ${this.maxStr};`;
     }
 
     translate(vec) {
-        this.minCorner = this.minCorner.add(vec);
-        this.maxCorner = this.maxCorner.add(vec);
+        this.minCorner.add(vec);
+        this.maxCorner.add(vec);
     }
 
     getMinCorner() {
-        return this.minCorner.add(this.temporaryTranslation);
+        return this.minCorner.copy().add(this.temporaryTranslation);
     }
 
+
     getMaxCorner() {
-        return this.maxCorner.add(this.temporaryTranslation);
+        return this.maxCorner.copy().add(this.temporaryTranslation);
     }
 
     intersect(origin, ray) {
@@ -112,17 +116,18 @@ class Sphere extends SceneObject {
         this.centerStr = 'sphereCenter' + Sphere.numSpheres;
         this.radiusStr = 'sphereRadius' + Sphere.numSpheres;
         this.intersectStr = 'tSphere' + Sphere.numSpheres;
-        this.temporaryTranslation = Vector.create([0, 0, 0]);
+        this.temporaryTranslation = new Vec3([0, 0, 0]);
+        //Vector.create([0, 0, 0]);
     }
 
     static intersect(origin, ray, center, radius) {
-        var toSphere = origin.subtract(center);
-        var a = ray.dot(ray);
-        var b = 2 * toSphere.dot(ray);
-        var c = toSphere.dot(toSphere) - radius * radius;
-        var discriminant = b * b - 4 * a * c;
+        const toSphere = origin.copy().subtract(center);
+        const a = Vec3.dot(ray, ray);
+        const b = 2 * Vec3.dot(toSphere, ray);
+        const c = Vec3.dot(toSphere, toSphere) - radius * radius;
+        const discriminant = b * b - 4 * a * c;
         if (discriminant > 0) {
-            var t = (-b - Math.sqrt(discriminant)) / (2 * a);
+            const t = (-b - Math.sqrt(discriminant)) / (2 * a);
             if (t > 0) {
                 return t;
             }
@@ -166,7 +171,7 @@ uniform float ${this.radiusStr};
     }
 
     setUniforms(renderer) {
-        renderer.uniforms[this.centerStr] = this.center.add(this.temporaryTranslation);
+        renderer.uniforms[this.centerStr] = this.center.copy().add(this.temporaryTranslation);
         renderer.uniforms[this.radiusStr] = this.radius;
     };
 
@@ -175,29 +180,34 @@ uniform float ${this.radiusStr};
     };
 
     translate(translation) {
-        this.center = this.center.add(translation);
+        // this.center = this.center.add(translation);
+        this.center.add(translation);
     };
 
     getMinCorner() {
-        return this.center.add(this.temporaryTranslation).subtract(Vector.create([this.radius, this.radius, this.radius]));
+        // return this.center.add(this.temporaryTranslation).subtract(Vector.create([this.radius, this.radius, this.radius]));
+        return this.center.copy().add(this.temporaryTranslation).subtract(new Vec3([this.radius, this.radius, this.radius]));
     };
 
     getMaxCorner() {
-        return this.center.add(this.temporaryTranslation).add(Vector.create([this.radius, this.radius, this.radius]));
+        // return this.center.add(this.temporaryTranslation).add(Vector.create([this.radius, this.radius, this.radius]));
+        return this.center.copy().add(this.temporaryTranslation).add(new Vec3([this.radius, this.radius, this.radius]));
     };
 
     intersect(origin, ray) {
-        return Sphere.intersect(origin, ray, this.center.add(this.temporaryTranslation), this.radius);
+        return Sphere.intersect(origin, ray, this.center.copy().add(this.temporaryTranslation), this.radius);
     };
 }
 
-let light = Vector.create([0.4, 0.5, -0.6]);
+let light = new Vec3([0.4, 0.5, -0.6]);
+//Vector.create([0.4, 0.5, -0.6]);
 const lightSize = 0.1;
 
 class Light extends SceneObject {
     constructor() {
         super();
-        this.temporaryTranslation = Vector.create([0, 0, 0]);
+        this.temporaryTranslation = new Vec3([0, 0, 0]);
+        //Vector.create([0, 0, 0]);
     }
 
     getGlobalCode() {
@@ -221,26 +231,28 @@ class Light extends SceneObject {
     }
 
     setUniforms(renderer) {
-        renderer.uniforms.light = light.add(this.temporaryTranslation);
+        renderer.uniforms.light = light.copy().add(this.temporaryTranslation);
     }
 
     temporaryTranslate(translation) {
-        var tempLight = light.add(translation);
+        let tempLight = light.copy().add(translation);
         Light.clampPosition(tempLight);
         this.temporaryTranslation = tempLight.subtract(light);
     }
 
     translate(translation) {
-        light = light.add(translation);
+        light.add(translation);
         Light.clampPosition(light);
     };
 
     getMinCorner() {
-        return light.add(this.temporaryTranslation).subtract(Vector.create([lightSize, lightSize, lightSize]));
+        // return light.add(this.temporaryTranslation).subtract(Vector.create([lightSize, lightSize, lightSize]));
+        return light.copy().add(this.temporaryTranslation).subtract(new Vec3([lightSize, lightSize, lightSize]));
     };
 
     getMaxCorner() {
-        return light.add(this.temporaryTranslation).add(Vector.create([lightSize, lightSize, lightSize]));
+        // return light.add(this.temporaryTranslation).add(Vector.create([lightSize, lightSize, lightSize]));
+        return light.copy().add(this.temporaryTranslation).add(new Vec3([lightSize, lightSize, lightSize]));
     };
 
     intersect(origin, ray) {
@@ -249,7 +261,8 @@ class Light extends SceneObject {
 
 
     static clampPosition(position) {
-        for (var i = 0; i < position.elements.length; i++) {
+        for (let i = 0; i < position.elements.length; i++) {
+            position[i] = Math.max(lightSize - 1, Math.min(1 - lightSize, position[i]));
             position.elements[i] = Math.max(lightSize - 1, Math.min(1 - lightSize, position.elements[i]));
         }
     };

@@ -1,4 +1,5 @@
 import { Vector, Matrix } from './sylvester.src.js';
+import { Vec3, Mat4 } from './dist/TSM.js';
 function getEyeRay(matrix, x, y, eye) {
   return matrix.multiply(Vector.create([x, y, 0, 1])).divideByW().ensure3().subtract(eye);
 }
@@ -12,7 +13,12 @@ function setUniforms(gl, program, uniforms) {
       gl.uniform3fv(location, new Float32Array([value.elements[0], value.elements[1], value.elements[2]]));
     } else if(value instanceof Matrix) {
       gl.uniformMatrix4fv(location, false, new Float32Array(value.flatten()));
-    } else {
+    } else if (value instanceof Vec3) {
+        gl.uniform3fv(location, new Float32Array([value.x, value.y, value.z]));
+    } else if (value instanceof Mat4) {
+        gl.uniformMatrix4fv(location, false, new Float32Array(value.all()));
+    }
+    else {
       gl.uniform1f(location, value);
     }
   }

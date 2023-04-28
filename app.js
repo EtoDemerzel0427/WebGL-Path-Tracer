@@ -1,6 +1,8 @@
 import { Vector } from './sylvester.src.js';
 import { UI } from './gui.js';
 import { Cube, Sphere, Light} from "./sceneObjects.js";
+import { Vec3 } from "./dist/TSM.js";
+import { Camera } from "./dist/webglutils/Camera.js";
 
 var gl = null;
 var ui;
@@ -11,7 +13,8 @@ var inputFocusCount = 0;
 var angleX = 0;
 var angleY = 0;
 var zoomZ = 2.5;
-var eye = Vector.create([0, 0, 0]);
+// var eye = Vector.create([0, 0, 0]);
+let eye = new Vec3([0, 0, 2.5]);
 var light = Vector.create([0.5, 0.5, -0.5]);
 
 var MATERIAL_DIFFUSE = 0;
@@ -25,9 +28,10 @@ var RED_GREEN_CORNELL_BOX = 1;
 var environment = YELLOW_BLUE_CORNELL_BOX;
 
 function tick(timeSinceStart) {
-  eye.elements[0] = zoomZ * Math.sin(angleY) * Math.cos(angleX);
-  eye.elements[1] = zoomZ * Math.sin(angleX);
-  eye.elements[2] = zoomZ * Math.cos(angleY) * Math.cos(angleX);
+  eye.x = zoomZ * Math.sin(angleY) * Math.cos(angleX);
+  eye.y = zoomZ * Math.sin(angleX);
+  eye.z = zoomZ * Math.cos(angleY) * Math.cos(angleX);
+
 
   document.getElementById('glossiness-factor').style.display = (ui.material === MATERIAL_GLOSSY) ? 'inline' : 'none';
 
@@ -39,97 +43,101 @@ function tick(timeSinceStart) {
 }
 
 function makeStudy() {
-  var objects = [];
+  const objects = [];
 
   // table top
-  objects.push(new Cube(Vector.create([-0.5, -0.3, -0.8]), Vector.create([0.3, -0.35, 0.8])));
+  objects.push(new Cube(new Vec3([-0.5, -0.3, -0.8]), new Vec3([0.3, -0.35, 0.8])));
 
   // table legs
-  objects.push(new Cube(Vector.create([-0.45, -1, -0.7]), Vector.create([-0.4, -0.352, 0.7])));
-  objects.push(new Cube(Vector.create([-0.45, -1, -0.75]), Vector.create([0.2, -0.352, -0.7])));
-  objects.push(new Cube(Vector.create([-0.45, -1, 0.75]), Vector.create([0.2, -0.352, 0.7])));
-  
-  objects.push(new Cube(Vector.create([-0.45, -1, 0.35]), Vector.create([0.2, -0.352, 0.3])));
+  objects.push(new Cube(new Vec3([-0.45, -1, -0.7]), new Vec3([-0.4, -0.352, 0.7])));
+  objects.push(new Cube(new Vec3([-0.45, -1, -0.75]), new Vec3([0.2, -0.352, -0.7])));
+  objects.push(new Cube(new Vec3([-0.45, -1, 0.75]), new Vec3([0.2, -0.352, 0.7])));
+
+  objects.push(new Cube(new Vec3([-0.45, -1, 0.35]), new Vec3([0.2, -0.352, 0.3])));
 
   // shelf
-  objects.push(new Cube(Vector.create([-0.45, -0.6, 0.7]), Vector.create([0.2, -0.55, 0.35])));
-  objects.push(new Cube(Vector.create([-0.45, -0.8, 0.7]), Vector.create([0.2, -0.75, 0.35])));
-  objects.push(new Cube(Vector.create([-0.45, -1, 0.7]), Vector.create([0.2, -0.95, 0.35])));
+  objects.push(new Cube(new Vec3([-0.45, -0.6, 0.7]), new Vec3([0.2, -0.55, 0.35])));
+  objects.push(new Cube(new Vec3([-0.45, -0.8, 0.7]), new Vec3([0.2, -0.75, 0.35])));
+  objects.push(new Cube(new Vec3([-0.45, -1, 0.7]), new Vec3([0.2, -0.95, 0.35])));
 
   // drawer
-  objects.push(new Cube(Vector.create([0.18, -0.36, 0.69]), Vector.create([0.22, -0.54, 0.36])));
-  objects.push(new Cube(Vector.create([0.18, -0.56, 0.69]), Vector.create([0.22, -0.74, 0.36])));
-  objects.push(new Cube(Vector.create([0.18, -0.76, 0.69]), Vector.create([0.22, -0.94, 0.36])));
+  objects.push(new Cube(new Vec3([0.18, -0.36, 0.69]), new Vec3([0.22, -0.54, 0.36])));
+  objects.push(new Cube(new Vec3([0.18, -0.56, 0.69]), new Vec3([0.22, -0.74, 0.36])));
+  objects.push(new Cube(new Vec3([0.18, -0.76, 0.69]), new Vec3([0.22, -0.94, 0.36])));
 
   // display on the table
-  objects.push(new Cube(Vector.create([-0.4, -0.28, 0.3]), Vector.create([-0.2, -0.3, 0.1])));
-  objects.push(new Cube(Vector.create([-0.32, -0.28, 0.23]), Vector.create([-0.28, 0, 0.18])));
-  objects.push(new Cube(Vector.create([-0.28, -0.02, 0.225]), Vector.create([-0.21, -0.07, 0.175])));
+  objects.push(new Cube(new Vec3([-0.4, -0.28, 0.3]), new Vec3([-0.2, -0.3, 0.1])));
+  objects.push(new Cube(new Vec3([-0.32, -0.28, 0.23]), new Vec3([-0.28, 0, 0.18])));
+  objects.push(new Cube(new Vec3([-0.28, -0.02, 0.225]), new Vec3([-0.21, -0.07, 0.175])));
 
-  objects.push(new Cube(Vector.create([-0.22, -0.2, 0.5]), Vector.create([-0.18, 0.2, -0.1])));
+  objects.push(new Cube(new Vec3([-0.22, -0.2, 0.5]), new Vec3([-0.18, 0.2, -0.1])));
 
   // audio
-  objects.push(new Cube(Vector.create([-0.25, -0.1, -0.3]), Vector.create([-0.1, -0.3, -0.15])));
-  objects.push(new Cube(Vector.create([-0.25, -0.1, 0.7]), Vector.create([-0.1, -0.3, 0.55])));
-
+  objects.push(new Cube(new Vec3([-0.25, -0.1, -0.3]), new Vec3([-0.1, -0.3, -0.15])));
+  objects.push(new Cube(new Vec3([-0.25, -0.1, 0.7]), new Vec3([-0.1, -0.3, 0.55])));
 
   // chair seat
-  objects.push(new Cube(Vector.create([0.3, -0.6, -0.2]), Vector.create([0.7, -0.55, 0.2])));
+  objects.push(new Cube(new Vec3([0.3, -0.6, -0.2]), new Vec3([0.7, -0.55, 0.2])));
 
   // chair legs
-  objects.push(new Cube(Vector.create([0.3, -1, -0.2]), Vector.create([0.35, -0.6, -0.15])));
-  objects.push(new Cube(Vector.create([0.3, -1, 0.15]), Vector.create([0.35, -0.6, 0.2])));
-  objects.push(new Cube(Vector.create([0.65, -1, -0.2]), Vector.create([0.7, 0.1, -0.15])));
-  objects.push(new Cube(Vector.create([0.65, -1, 0.15]), Vector.create([0.7, 0.1, 0.2])));
+  objects.push(new Cube(new Vec3([0.3, -1, -0.2]), new Vec3([0.35, -0.6, -0.15])));
+  objects.push(new Cube(new Vec3([0.3, -1, 0.15]), new Vec3([0.35, -0.6, 0.2])));
+  objects.push(new Cube(new Vec3([0.65, -1, -0.2]), new Vec3([0.7, 0.1, -0.15])));
+  objects.push(new Cube(new Vec3([0.65, -1, 0.15]), new Vec3([0.7, 0.1, 0.2])));
 
   // chair back
-  objects.push(new Cube(Vector.create([0.65, 0.05, -0.15]), Vector.create([0.7, 0.1, 0.15])));
-  objects.push(new Cube(Vector.create([0.65, -0.55, -0.09]), Vector.create([0.7, 0.1, -0.03])));
-  objects.push(new Cube(Vector.create([0.65, -0.55, 0.03]), Vector.create([0.7, 0.1, 0.09])));
+  objects.push(new Cube(new Vec3([0.65, 0.05, -0.15]), new Vec3([0.7, 0.1, 0.15])));
+  objects.push(new Cube(new Vec3([0.65, -0.55, -0.09]), new Vec3([0.7, 0.1, -0.03])));
+  objects.push(new Cube(new Vec3([0.65, -0.55, 0.03]), new Vec3([0.7, 0.1, 0.09])));
 
   // sphere on the wall
-  objects.push(new Sphere(Vector.create([-0.1, 0.6, -1.1]), 0.25 ));
+  objects.push(new Sphere(new Vec3([-0.1, 0.6, -1.1]), 0.25 ));
 
   return objects;
 }
+
+
 
 function makeLivingRoom() {
   var objects = [];
 
   // lower level
   // table top
-  objects.push(new Cube(Vector.create([-0.8, -0.65, 0]), Vector.create([-0.35, -0.6, 0.7])));
-  objects.push(new Cube(Vector.create([-0.8, -0.8, 0]), Vector.create([-0.35, -0.75, 0.7])));
+  objects.push(new Cube(new Vec3([-0.8, -0.65, 0]), new Vec3([-0.35, -0.6, 0.7])));
+  objects.push(new Cube(new Vec3([-0.8, -0.8, 0]), new Vec3([-0.35, -0.75, 0.7])));
 
   // table legs
-  objects.push(new Cube(Vector.create([-0.75, -1, 0.05]), Vector.create([-0.7, -0.65, 0.1])));
-  objects.push(new Cube(Vector.create([-0.5, -1, 0.05]), Vector.create([-0.45, -0.65, 0.1])));
-  objects.push(new Cube(Vector.create([-0.75, -1, 0.6]), Vector.create([-0.7, -0.65, 0.65])));
-  objects.push(new Cube(Vector.create([-0.5, -1, 0.6]), Vector.create([-0.45, -0.65, 0.65])));
+  objects.push(new Cube(new Vec3([-0.75, -1, 0.05]), new Vec3([-0.7, -0.65, 0.1])));
+  objects.push(new Cube(new Vec3([-0.5, -1, 0.05]), new Vec3([-0.45, -0.65, 0.1])));
+  objects.push(new Cube(new Vec3([-0.75, -1, 0.6]), new Vec3([-0.7, -0.65, 0.65])));
+  objects.push(new Cube(new Vec3([-0.5, -1, 0.6]), new Vec3([-0.45, -0.65, 0.65])));
 
   // TV back
-  objects.push(new Cube(Vector.create([-1.0, 0, -0.1]), Vector.create([-0.95, -0.1, 0.1])));
-  objects.push(new Cube(Vector.create([-0.96, 0.3, -0.65]), Vector.create([-0.95, -0.4, 0.65])));
+  objects.push(new Cube(new Vec3([-1.0, 0, -0.1]), new Vec3([-0.95, -0.1, 0.1])));
+  objects.push(new Cube(new Vec3([-0.96, 0.3, -0.65]), new Vec3([-0.95, -0.4, 0.65])));
 
   // Sofa
-  objects.push(new Cube(Vector.create([-0.4, -0.81, -0.3]), Vector.create([0.9, -0.6, -0.9])));
-  objects.push(new Cube(Vector.create([0.2, -0.81, 0.9]), Vector.create([0.9, -0.6, -0.4])));
+  objects.push(new Cube(new Vec3([-0.4, -0.81, -0.3]), new Vec3([0.9, -0.6, -0.9])));
+  objects.push(new Cube(new Vec3([0.2, -0.81, 0.9]), new Vec3([0.9, -0.6, -0.4])));
 
-  objects.push(new Cube(Vector.create([-0.36, -0.9, -0.3]), Vector.create([0.9, -0.8, -0.9])));
-  objects.push(new Cube(Vector.create([0.24, -0.9, 0.86]), Vector.create([0.9, -0.8, -0.4])));
+  objects.push(new Cube(new Vec3([-0.36, -0.9, -0.3]), new Vec3([0.9, -0.8, -0.9])));
+  objects.push(new Cube(new Vec3([0.24, -0.9, 0.86]), new Vec3([0.9, -0.8, -0.4])));
 
-  objects.push(new Cube(Vector.create([-0.3, -0.45, -0.86]), Vector.create([0.95, -0.7, -0.95])));
-  objects.push(new Cube(Vector.create([0.85, -0.35, 0.85]), Vector.create([0.95, -0.7, -0.85])));
-  objects.push(new Cube(Vector.create([0.3, -0.45, 0.86]), Vector.create([0.95, -0.7, 0.95])));
+  objects.push(new Cube(new Vec3([-0.3, -0.45, -0.86]), new Vec3([0.95, -0.7, -0.95])));
+  objects.push(new Cube(new Vec3([0.85, -0.35, 0.85]), new Vec3([0.95, -0.7, -0.85])));
+  objects.push(new Cube(new Vec3([0.3, -0.45, 0.86]), new Vec3([0.95, -0.7, 0.95])));
 
   // sofa legs
-  objects.push(new Cube(Vector.create([-0.3, -1, -0.4]), Vector.create([-0.35, -0.9, -0.45])));
-  objects.push(new Cube(Vector.create([-0.3, -1, -0.8]), Vector.create([-0.35, -0.9, -0.75])));
-  objects.push(new Cube(Vector.create([0.25, -1, 0.8]), Vector.create([0.3, -0.9, 0.75])));
-  objects.push(new Cube(Vector.create([0.85, -1, 0.8]), Vector.create([0.9, -0.9, 0.75])));
+  objects.push(new Cube(new Vec3([-0.3, -1, -0.4]), new Vec3([-0.35, -0.9, -0.45])));
+  objects.push(new Cube(new Vec3([-0.3, -1, -0.8]), new Vec3([-0.35, -0.9, -0.75])));
+  objects.push(new Cube(new Vec3([0.25, -1, 0.8]), new Vec3([0.3, -0.9, 0.75])));
+  objects.push(new Cube(new Vec3([0.85, -1, 0.8]), new Vec3([0.9, -0.9, 0.75])));
 
   return objects;
 }
+
+
+
 
 function makeEmpty() {
   var objects = [];
@@ -143,10 +151,10 @@ function addRecursiveSpheresBranch(objects, center, radius, depth, dir) {
   if(depth--) {
     if(dir != XNEG) addRecursiveSpheresBranch(objects, center.subtract(Vector.create([radius * 1.5, 0, 0])), radius / 2, depth, XPOS);
     if(dir != XPOS) addRecursiveSpheresBranch(objects, center.add(Vector.create([radius * 1.5, 0, 0])),      radius / 2, depth, XNEG);
-    
+
     if(dir != YNEG) addRecursiveSpheresBranch(objects, center.subtract(Vector.create([0, radius * 1.5, 0])), radius / 2, depth, YPOS);
     if(dir != YPOS) addRecursiveSpheresBranch(objects, center.add(Vector.create([0, radius * 1.5, 0])),      radius / 2, depth, YNEG);
-    
+
     if(dir != ZNEG) addRecursiveSpheresBranch(objects, center.subtract(Vector.create([0, 0, radius * 1.5])), radius / 2, depth, ZPOS);
     if(dir != ZPOS) addRecursiveSpheresBranch(objects, center.add(Vector.create([0, 0, radius * 1.5])),      radius / 2, depth, ZNEG);
   }
