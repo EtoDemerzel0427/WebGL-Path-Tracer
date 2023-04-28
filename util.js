@@ -28,14 +28,6 @@ function setUniforms(gl, program, uniforms) {
   }
 }
 
-function concat(objects, func) {
-  let text = '';
-  for(let i = 0; i < objects.length; i++) {
-    text += func(objects[i]);
-  }
-  return text;
-}
-
 function compileSource(gl, source, type) {
   const shader = gl.createShader(type);
   gl.shaderSource(shader, source);
@@ -58,4 +50,4 @@ function compileShader(gl, vertexSource, fragmentSource) {
   return shaderProgram;
 }
 
-export { getEyeRay, setUniforms, concat, compileShader};
+export { getEyeRay, setUniforms, compileShader};

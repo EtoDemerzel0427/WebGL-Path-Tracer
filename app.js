@@ -2,18 +2,18 @@ import { UI } from './gui.js';
 import { Cube, Sphere } from "./sceneObjects.js";
 import { Vec3 } from "./dist/TSM.js";
 
-var gl = null;
-var ui;
-var error;
-var canvas;
-var inputFocusCount = 0;
+let gl = null;
+let ui;
+let error;
+let canvas;
+let inputFocusCount = 0;
 
-var angleX = 0;
-var angleY = 0;
-var zoomZ = 2.5;
+let angleX = 0;
+let angleY = 0;
+const zoomZ = 2.5;
 let eye = new Vec3([0, 0, 2.5]);
 
-var MATERIAL_DIFFUSE = 0;
+const MATERIAL_DIFFUSE = 0;
 var MATERIAL_MIRROR = 1;
 var MATERIAL_GLOSSY = 2;
 var material = MATERIAL_DIFFUSE;
