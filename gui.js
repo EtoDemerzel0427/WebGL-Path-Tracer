@@ -115,7 +115,6 @@ export class UI {
   }
 
   selectLight() {
-    console.log('selectLight');
     this.renderer.selectedObject = this.objects[0];
   }
 

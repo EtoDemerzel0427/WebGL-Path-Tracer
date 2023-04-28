@@ -260,9 +260,8 @@ class Light extends SceneObject {
 
 
     static clampPosition(position) {
-        for (let i = 0; i < position.elements.length; i++) {
-            position[i] = Math.max(lightSize - 1, Math.min(1 - lightSize, position[i]));
-            position.elements[i] = Math.max(lightSize - 1, Math.min(1 - lightSize, position.elements[i]));
+        for (let i = 0; i < 3; i++) {
+            position[i] = Math.max(lightSize - 1, Math.min(1 - lightSize, position.at(i)));
         }
     };
 }
