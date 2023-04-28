@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>WebGL Path Tracing</title>
+  <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  <link rel="stylesheet" type="text/css" href="main.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Roboto+Slab:wght@400;700&display=swap" rel="stylesheet">
+  <script type="module" src="app.js"></script>
+</head><body>
+  <h1>🔥 WebGL Path Tracing 🔥</h1>
+
+  <div id="main">
+    <canvas id="canvas" class="card" width="512" height="512"></canvas>
+    <div id="error"><noscript>Please enable JavaScript.</noscript></div>
+  </div>
+
+  <div id="buttons">
+    <div class="button-group">
+      <b>Move the position of the light:</b>
+      <br><button class="light-button">Locate the light</button>
+    </div>
+
+    <div class="button-group">
+      <b>Add more scene objects:</b>
+      <br><button class="add-sphere-button">Add one random sphere</button>
+      <br><button class="add-cube-button">Add one random cube</button>
+    </div>
+
+    <div class="button-group">
+      <b>Material:</b>
+      <select id="material">
+        <option value="0" selected>Diffuse</option>
+        <option value="1">Mirror</option>
+        <option value="2">Glossy</option>
+      </select>
+      <span id="glossiness-factor">
+      <br>with glossiness factor: 0 &lt; <label for="glossiness"></label><input id="glossiness" value="0.6"> &lt; 1
+    </span>
+      <br>
+
+      <b>Environment:</b>
+      <label for="environment"></label><select id="environment">
+        <option value="0" selected>Cornell Box 1</option>
+        <option value="1">Cornell Box 2</option>
+      </select>
+    </div>
+
+
+    <div class="button-group">
+      <b>Load preset scene:</b>
+      <br><button class="scene-button" data-scene-name="room1">Room-1</button>
+      <br><button class="scene-button" data-scene-name="room2">Room-2</button>
+      <br><button class="scene-button" data-scene-name="empty">Empty Room</button>
+    </div>
+
+  </div>
+
+
+
+
+
+
+   <p id="footer">Created by Weiran Huang and Mingyu Lei for the final project of <em>CS 378H: Computer Graphics</em> at UT Austin.</p>
+</body></html>
