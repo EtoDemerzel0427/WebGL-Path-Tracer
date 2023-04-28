@@ -179,17 +179,14 @@ uniform float ${this.radiusStr};
     };
 
     translate(translation) {
-        // this.center = this.center.add(translation);
         this.center.add(translation);
     };
 
     getMinCorner() {
-        // return this.center.add(this.temporaryTranslation).subtract(Vector.create([this.radius, this.radius, this.radius]));
         return this.center.copy().add(this.temporaryTranslation).subtract(new Vec3([this.radius, this.radius, this.radius]));
     };
 
     getMaxCorner() {
-        // return this.center.add(this.temporaryTranslation).add(Vector.create([this.radius, this.radius, this.radius]));
         return this.center.copy().add(this.temporaryTranslation).add(new Vec3([this.radius, this.radius, this.radius]));
     };
 
@@ -199,14 +196,12 @@ uniform float ${this.radiusStr};
 }
 
 let light = new Vec3([0.4, 0.5, -0.6]);
-//Vector.create([0.4, 0.5, -0.6]);
 const lightSize = 0.1;
 
 class Light extends SceneObject {
     constructor() {
         super();
         this.temporaryTranslation = new Vec3([0, 0, 0]);
-        //Vector.create([0, 0, 0]);
     }
 
     getGlobalCode() {
